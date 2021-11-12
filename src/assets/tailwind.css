@@ -3,3 +3,7 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.primary-color {
+  background-color: #33D49E;
+}
