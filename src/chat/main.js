@@ -6,5 +6,3 @@
 //   el: "#app",
 //   render: (h) => h(App),
 // });
-
-console.log("dari override");

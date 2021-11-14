@@ -14,16 +14,21 @@
       overflow-hidden
     "
   >
-    <header class="flex justify-between p-4 shadow-md">
+    <header class="flex justify-between p-4 shadow-md items-center">
       <div class="flex justify-center">
         <img
-          class="w-8 h-8"
+          class="w-12 h-12"
           src="../assets/img/logo/connected=true.png"
           alt="logo.png"
         />
       </div>
+      <div class="flex justify-center">
+        <button class="minimize rounded-full w-7 h-7" @click="handleClick">
+          -
+        </button>
+      </div>
     </header>
-    <content class="h-full">
+    <content class="h-full overflow-y-auto">
       <chat-bubble name="Acnologia" chat="Woi" time="10:12" :me="true" />
       <chat-bubble
         name="Abc"
@@ -49,21 +54,31 @@
 </template>
 
 <script>
-import ChatBubble from "./ChatBubble.vue";
+import ChatBubble from "./ChatBubble.vue"
 
 export default {
   components: { ChatBubble },
   name: "ChatMain",
   methods: {
     submitChat() {
-      console.log("send!");
+      console.log("send!")
+    },
+    handleClick() {
+      this.$emit("click")
     },
   },
-};
+}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "../assets/scss/variables.scss";
+
 .chat-main {
   width: 425px;
+
+  button.minimize {
+    background-color: $chat-bubble-me;
+    color: whitesmoke;
+  }
 }
 </style>

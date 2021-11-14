@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import FloatingButton from "@/components/FloatingButton";
-import ChatMain from "../components/ChatMain.vue";
+import FloatingButton from "@/components/FloatingButton"
+import ChatMain from "@/components/ChatMain.vue"
 
 export default {
   name: "App",
@@ -18,14 +18,14 @@ export default {
   data() {
     return {
       opened: false,
-    };
+    }
   },
   methods: {
     toggleOpened() {
-      this.opened = !this.opened;
+      this.opened = !this.opened
     },
   },
-};
+}
 </script>
 
 <style scoped>
