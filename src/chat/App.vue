@@ -1,13 +1,14 @@
 <template>
   <main class="chat-nobar-main">
-    <chat-main v-if="opened" />
+    <chat-main v-if="opened" @minimize="toggleOpened" />
     <floating-button v-else @click="toggleOpened" />
   </main>
 </template>
 
 <script>
-import FloatingButton from "@/components/FloatingButton"
-import ChatMain from "@/components/ChatMain.vue"
+import FloatingButton from "@/components/FloatingButton";
+import ChatMain from "@/components/ChatMain.vue";
+import { STATES } from "../constants/videoConsts";
 
 export default {
   name: "App",
@@ -18,14 +19,59 @@ export default {
   data() {
     return {
       opened: false,
-    }
+      videoPlayback: {
+        state: STATES.PAUSE,
+        time: null,
+        youtubeId: null,
+      },
+    };
   },
-  methods: {
-    toggleOpened() {
-      this.opened = !this.opened
+  computed: {
+    videoPlayer() {
+      return window.VIDEO_PLAYER;
+    },
+    progressBar() {
+      return window.PROGRESS_BAR;
     },
   },
-}
+  mounted() {
+    this.initEventListeners();
+  },
+  destroyed() {
+    this.removeEventListeners();
+  },
+  methods: {
+    initEventListeners() {
+      this.videoPlayer.addEventListener("play", this.handlePlayButtonClick);
+      this.videoPlayer.addEventListener("pause", this.handlePauseButtonClick);
+      this.progressBar.addEventListener("click", this.handleSeek);
+    },
+    removeEventListeners() {
+      this.videoPlayer.removeEventListener("play", this.handlePlayButtonClick);
+      this.videoPlayer.removeEventListener(
+        "pause",
+        this.handlePauseButtonClick
+      );
+      this.progressBar.removeEventListener("click", this.handleSeek);
+    },
+    handleSeek() {
+      const currentTime = document.querySelector(
+        ".video-stream.html5-main-video"
+      ).currentTime;
+
+      console.log("SEEK TIME", currentTime);
+    },
+    handlePlayButtonClick() {
+      console.log("PLAY");
+    },
+    handlePauseButtonClick() {
+      console.log("PAUSE");
+    },
+    toggleOpened() {
+      this.opened = !this.opened;
+    },
+  },
+};
 </script>
 
 <style scoped>

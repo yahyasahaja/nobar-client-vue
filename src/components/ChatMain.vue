@@ -54,20 +54,23 @@
 </template>
 
 <script>
-import ChatBubble from "./ChatBubble.vue"
+import ChatBubble from "./ChatBubble.vue";
 
 export default {
   components: { ChatBubble },
   name: "ChatMain",
   methods: {
+    handlePlayButtonClick() {
+      console.log("ganti");
+    },
     submitChat() {
-      console.log("send!")
+      console.log("send!");
     },
     handleClick() {
-      this.$emit("click")
+      this.$emit("minimize");
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -44,7 +44,7 @@ export default {
     };
   },
   mounted() {
-    this.handleClick();
+    // this.handleClick();
   },
   methods: {
     copyClipboard() {
@@ -77,17 +77,9 @@ export default {
       }
     },
     async handleClick() {
-      console.log("woi");
-      // let [tab] = await browser.tabs.query({
-      //   active: true,
-      //   currentWindow: true,
-      // });
-
       await browser.tabs.executeScript({
         file: "js/content-script.js",
       });
-
-      console.log("woiiii");
     },
   },
 };
