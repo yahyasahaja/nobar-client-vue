@@ -8,14 +8,11 @@
       navigate to <span class="font-bold"> this URL </span> and
       <span class="font-bold"> then click on the green Tp icon. </span>
     </p>
-    <div
-      class="flex justify-center relative mx-8 mt-6 mb-4"
-      v-if="roomId !== ''"
-    >
+    <div class="flex justify-center relative mx-8 mt-6 mb-4" v-if="link">
       <input
         class="rounded-md p-1 py-2 pr-12 w-full main"
         type="text"
-        :value="roomId"
+        :value="link"
         disabled
       />
       <button
@@ -39,7 +36,12 @@
 </template>
 
 <script>
-import { eventBus } from "./EventBus"
+import { eventBus } from "./EventBus";
+
+const isDev = process.env.NODE_ENV === "development";
+const LINK_ORIGIN = isDev
+  ? "http://localhost:3000"
+  : "https://youtube.com/watch";
 
 export default {
   name: "App",
@@ -47,39 +49,50 @@ export default {
     return {
       copied: false,
       roomId: "",
-    }
+    };
+  },
+  computed: {
+    link() {
+      if (!this.roomId) return null;
+      return `${LINK_ORIGIN}?roomId=${this.roomId}${
+        this.videoId ? `&v=${this.videoId}` : ""
+      }`;
+    },
   },
   mounted() {
     eventBus.$on("updateRoom", (roomId) => {
-      this.roomId = roomId
-    })
+      this.roomId = roomId;
+    });
+    eventBus.$on("updateVideoId", (videoId) => {
+      this.videoId = videoId;
+    });
   },
   methods: {
     copyClipboard() {
-      const value = document.querySelector(`input.main`).value
+      const value = document.querySelector(`input.main`).value;
 
       if (value) {
         if (window.clipboardData && window.clipboardData.setData) {
           // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
-          return window.clipboardData.setData("Text", value)
+          return window.clipboardData.setData("Text", value);
         } else if (
           document.queryCommandSupported &&
           document.queryCommandSupported("copy")
         ) {
-          var textarea = document.createElement("textarea")
-          textarea.textContent = value
-          textarea.style.position = "fixed" // Prevent scrolling to bottom of page in Microsoft Edge.
-          document.body.appendChild(textarea)
-          textarea.select()
+          var textarea = document.createElement("textarea");
+          textarea.textContent = value;
+          textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in Microsoft Edge.
+          document.body.appendChild(textarea);
+          textarea.select();
 
           try {
-            return document.execCommand("copy") // Security exception may be thrown by some browsers.
+            return document.execCommand("copy"); // Security exception may be thrown by some browsers.
           } catch (ex) {
-            console.warn("Copy to clipboard failed.", ex)
-            return false
+            console.warn("Copy to clipboard failed.", ex);
+            return false;
           } finally {
-            document.body.removeChild(textarea)
-            this.copied = !this.copied
+            document.body.removeChild(textarea);
+            this.copied = !this.copied;
           }
         }
       }
@@ -87,10 +100,10 @@ export default {
     async handleClick() {
       await browser.tabs.executeScript({
         file: "js/content-script.js",
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
