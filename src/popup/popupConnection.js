@@ -1,23 +1,39 @@
 import { eventBus } from "./EventBus";
-import { getStorage } from "../utils";
+import { getStorage, getCurrentTab, setStorage } from "../utils";
 import {
   // CHAT_MESSAGE,
   // JOIN_ROOM,
   // LEAVE_ROOM,
-  MESSAGE_CONNECTED,
+  ROOM_CREATED,
 } from "../constants/videoConsts";
 
 export const init = async () => {
+  const tab = await getCurrentTab();
   browser.runtime.onMessage.addListener(function (req) {
-    const { type, roomId /* tabId, from */ } = req;
+    const { type, roomId } = req; // from
 
-    if (type === MESSAGE_CONNECTED) {
-      // alert(`type:${type}, roomId: ${roomId}, tabId: ${tabId}, from: ${from},`);
+    alert(`type:${type}, roomId: ${roomId}, tabId: ${tab.id}`);
+    if (type === ROOM_CREATED) {
       if (roomId) eventBus.$emit("updateRoom", roomId);
+      setStorage({ roomMasterTabId: tab.id })
+        .then(() => {
+          eventBus.$emit("updateRoomMasterTabId", roomMasterTabId);
+        })
+        .catch((error) => console.log(error));
     }
   });
 
-  const { roomId, videoId } = await getStorage(["roomId", "videoId"]);
+  const { roomId, videoId, tabId, roomMasterTabId } = await getStorage([
+    "roomId",
+    "videoId",
+    "tabId",
+    "roomMasterTabId",
+  ]);
   if (roomId) eventBus.$emit("updateRoom", roomId);
   if (videoId) eventBus.$emit("updateVideoId", videoId);
+  if (tabId) eventBus.$emit("updateTabId", tabId);
+  if (roomMasterTabId) eventBus.$emit("updateRoomMasterTabId", roomMasterTabId);
+  if (tab) eventBus.$emit("updateCurrentTabId", tab.id);
+
+  console.log(tab.id, roomMasterTabId);
 };

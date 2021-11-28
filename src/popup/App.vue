@@ -8,7 +8,7 @@
       navigate to <span class="font-bold"> this URL </span> and
       <span class="font-bold"> then click on the green Tp icon. </span>
     </p>
-    <div class="flex justify-center relative mx-8 mt-6 mb-4" v-if="link">
+    <div class="flex justify-center relative mx-8 mt-6 mb-4" v-if="joined">
       <input
         class="rounded-md p-1 py-2 pr-12 w-full main"
         type="text"
@@ -49,9 +49,21 @@ export default {
     return {
       copied: false,
       roomId: "",
+      videoId: null,
+      tabId: null,
+      currentTabId: null,
+      roomMasterTabId: null,
     };
   },
   computed: {
+    roomMaster() {
+      return this.currentTabId === this.roomMasterTabId;
+    },
+    joined() {
+      return (
+        this.roomMaster || (this.roomId && this.tabId === this.currentTabId)
+      );
+    },
     link() {
       if (!this.roomId) return null;
       return `${LINK_ORIGIN}?roomId=${this.roomId}${
@@ -65,6 +77,15 @@ export default {
     });
     eventBus.$on("updateVideoId", (videoId) => {
       this.videoId = videoId;
+    });
+    eventBus.$on("updateTabId", (tabId) => {
+      this.tabId = tabId;
+    });
+    eventBus.$on("updateCurrentTabId", (currentTabId) => {
+      this.currentTabId = currentTabId;
+    });
+    eventBus.$on("updateRoomMasterTabId", (roomMasterTabId) => {
+      this.roomMasterTabId = roomMasterTabId;
     });
   },
   methods: {

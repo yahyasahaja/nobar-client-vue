@@ -15,3 +15,15 @@ export const setStorage = (arg) =>
       resolve(null);
     }
   });
+
+export const getCurrentTab = () =>
+  new Promise((resolve) => {
+    try {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        resolve(tabs[0]);
+      });
+    } catch (error) {
+      console.log(error);
+      resolve(null);
+    }
+  });
