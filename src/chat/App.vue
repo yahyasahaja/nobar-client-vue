@@ -1,6 +1,6 @@
 <template>
   <main class="chat-nobar-main">
-    <chat-main v-if="opened" @minimize="toggleOpened" />
+    <chat-main v-if="opened" :messages="messages" @minimize="toggleOpened" />
     <floating-button v-else @click="toggleOpened" />
   </main>
 </template>
@@ -9,6 +9,8 @@
 import FloatingButton from "@/components/FloatingButton";
 import ChatMain from "@/components/ChatMain.vue";
 import { STATES } from "../constants/videoConsts";
+import { socket, name } from "../content-scripts/connection";
+import { CHAT_MESSAGE } from "../constants/videoConsts";
 
 export default {
   name: "App",
@@ -24,6 +26,7 @@ export default {
         time: null,
         youtubeId: null,
       },
+      messages: [],
     };
   },
   computed: {
@@ -45,6 +48,10 @@ export default {
       this.videoPlayer.addEventListener("play", this.handlePlayButtonClick);
       this.videoPlayer.addEventListener("pause", this.handlePauseButtonClick);
       this.progressBar.addEventListener("click", this.handleSeek);
+      socket.on(CHAT_MESSAGE, (payload) => {
+        payload.me = payload.name === name;
+        this.messages.push(payload);
+      });
     },
     removeEventListeners() {
       this.videoPlayer.removeEventListener("play", this.handlePlayButtonClick);

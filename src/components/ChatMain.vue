@@ -29,13 +29,22 @@
       </div>
     </header>
     <content class="h-full overflow-y-auto">
-      <chat-bubble name="Acnologia" chat="Woi" time="10:12" :me="true" />
+      <chat-bubble
+        v-for="(message, i) in messages"
+        :key="i"
+        :name="message.name"
+        :chat="message.message"
+        :time="message.time"
+        :me="message.me"
+        :type="message.type"
+      />
+      <!-- <chat-bubble name="Acnologia" chat="Woi" time="10:12" :me="true" />
       <chat-bubble
         name="Abc"
         chat="woi woi woi woi woi"
         time="10:13"
         :me="false"
-      />
+      /> -->
     </content>
     <form
       class="p-3 flex"
@@ -43,6 +52,7 @@
       @submit.prevent="submitChat"
     >
       <input
+        v-model="inputMessage"
         class="p-3 rounded-full w-full bg-white outline-none"
         placeholder="Type some message here"
       />
@@ -55,16 +65,36 @@
 
 <script>
 import ChatBubble from "./ChatBubble.vue";
+import { CHAT_MESSAGE } from "../constants/videoConsts";
+import { socket, name } from "../content-scripts/connection";
 
 export default {
   components: { ChatBubble },
   name: "ChatMain",
+  props: {
+    messages: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      inputMessage: "",
+    };
+  },
   methods: {
     handlePlayButtonClick() {
       console.log("ganti");
     },
     submitChat() {
-      console.log("send!");
+      console.log("woi");
+      socket.emit(CHAT_MESSAGE, {
+        type: "chat",
+        message: this.inputMessage,
+        name,
+        time: Date.now(),
+      });
+      this.inputMessage = "";
     },
     handleClick() {
       this.$emit("minimize");

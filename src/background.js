@@ -16,8 +16,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const search = new URLSearchParams(url.search);
     const roomId = search.get("roomId");
     const videoId = search.get("v");
-    if (roomId)
-      await setStorage({ tabId, roomId, videoId, joinedInvitationLink: false });
+    if (roomId) {
+      await setStorage({ tabId, roomId, videoId, joinedInvitationLink: true });
+      chrome.tabs.executeScript(tab.id, { file: "js/content-script.js" });
+    }
     console.log("Room id saved", tabId, roomId, changeInfo, videoId);
   } catch (error) {
     console.log(error);

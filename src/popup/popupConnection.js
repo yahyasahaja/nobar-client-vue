@@ -10,11 +10,13 @@ import {
 export const init = async () => {
   const tab = await getCurrentTab();
   browser.runtime.onMessage.addListener(function (req) {
-    const { type, roomId } = req; // from
+    const { type, roomId, videoId } = req; // from
 
     alert(`type:${type}, roomId: ${roomId}, tabId: ${tab.id}`);
     if (type === ROOM_CREATED) {
       if (roomId) eventBus.$emit("updateRoom", roomId);
+      if (videoId) eventBus.$emit("updateVideoId", videoId);
+      if (tab.id) eventBus.$emit("updateTabId", tab.id);
       setStorage({ roomMasterTabId: tab.id })
         .then(() => {
           eventBus.$emit("updateRoomMasterTabId", roomMasterTabId);

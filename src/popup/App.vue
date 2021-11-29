@@ -28,8 +28,16 @@
       <button
         class="w-full rounded-3xl py-5/2 h-full main"
         @click="handleClick"
+        v-if="!joined"
       >
         Start Party
+      </button>
+      <button
+        class="w-full rounded-3xl py-5/2 h-full disconnect"
+        @click="disconnect"
+        v-else
+      >
+        Disconnect
       </button>
     </div>
   </div>
@@ -123,6 +131,9 @@ export default {
         file: "js/content-script.js",
       });
     },
+    disconnect() {
+      eventBus.$emit("disconnect");
+    },
   },
 };
 </script>
@@ -162,6 +173,18 @@ button {
     border: none;
     color: white;
     font: 900;
+  }
+
+  &.disconnect {
+    background-color: transparent;
+    border: none;
+    color: $disconnect;
+    font: 900;
+    transition: background-color 0.5s ease;
+
+    &:hover {
+      background-color: #efefef;
+    }
   }
 
   &.btn-copy {

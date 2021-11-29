@@ -7,35 +7,31 @@ import {
 import { getStorage, setStorage } from "../utils";
 
 export const socket = io("localhost:3000");
+const names = ["Joni", "Elon", "Musk", "Si Evan", "Asep", "Juminten", "Fatin"];
+export const name = names[Math.floor(Math.random() * names.length)];
 
 export const initConnection = async () => {
   const storage = await getStorage(["roomId", "joinedInvitationLink"]);
-  const name = Math.random();
 
   let roomId = storage?.roomId;
-
-  const init = () => {
-    socket.emit(JOIN_ROOM, { roomId, name });
-
-    // socket.on(CHAT_MESSAGE, function({ message }) {
-    //  TODO
-    // });
-  };
 
   if (!storage?.joinedInvitationLink) {
     socket.on("connect", () => {
       roomId = socket.id;
-      init();
+      socket.emit(JOIN_ROOM, { roomId, name });
+      const search = new URLSearchParams(location.search);
+      const videoId = search.get("v");
       chrome.runtime.sendMessage({
         type: ROOM_CREATED,
         from: "content",
         roomId,
+        videoId,
       });
       console.log("connected as room master");
     });
   } else {
-    init();
-    await setStorage({ joinedInvitationLink: true });
+    socket.emit(JOIN_ROOM, { roomId, name });
+    await setStorage({ joinedInvitationLink: false });
     console.log("connected as joiner");
   }
 };

@@ -35,7 +35,7 @@ export default {
       required: true,
     },
     time: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     me: {
@@ -43,7 +43,13 @@ export default {
       required: true,
     },
   },
-}
+  computed: {
+    composedTime() {
+      const date = new Date(this.time).getMinutes;
+      return `${date.getHours()}:${date.getMinutes}`;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
